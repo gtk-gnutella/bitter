@@ -1,0 +1,40 @@
+# You'll need a Bourne Shell, bash or ksh should work as well
+SHELL = /bin/sh
+
+OBJECTS =	\
+	base16.o \
+	base32.o \
+	compat.o \
+	debug.o \
+	nettools.o \
+	tiger.o \
+	tigertree.o \
+
+# Leave the above line empty
+
+INCLUDES =	\
+	append.h \
+	base16.h \
+	base32.h \
+	casts.h \
+	common.h \
+	compat.h \
+	compat_sha1.h \
+	debug.h \
+	net_addr.h \
+	nettools.h \
+	tiger.h \
+	tigertree.h \
+	tiger_sboxes.h \
+
+# Leave the above line empty
+
+all:	$(OBJECTS)
+
+clean:
+	rm -f -- $(OBJECTS)
+
+clobber: distclean
+
+distclean: clean
+
