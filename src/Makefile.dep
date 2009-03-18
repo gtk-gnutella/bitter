@@ -1,0 +1,4 @@
+main.o: main.c lib/common.h lib/config.h lib/casts.h lib/debug.h \
+  lib/common.h lib/compat.h lib/tigertree.h lib/tiger.h lib/tiger.h \
+  lib/base16.h lib/base32.h lib/compat_sha1.h lib/nettools.h \
+  lib/net_addr.h lib/nettools.h

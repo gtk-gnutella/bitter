@@ -1,0 +1,10 @@
+base16.o: base16.c common.h config.h casts.h debug.h compat.h base16.h
+base32.o: base32.c common.h config.h casts.h debug.h compat.h base32.h
+compat.o: compat.c compat.h common.h config.h casts.h debug.h append.h \
+  nettools.h net_addr.h
+debug.o: debug.c debug.h common.h config.h casts.h compat.h
+nettools.o: nettools.c nettools.h common.h config.h casts.h debug.h \
+  compat.h net_addr.h append.h base32.h
+tiger.o: tiger.c tiger.h common.h config.h casts.h debug.h compat.h \
+  tiger_sboxes.h
+tigertree.o: tigertree.c
