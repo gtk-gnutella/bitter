@@ -299,11 +299,7 @@ config_test_h_def() {
 
 config_make_def() {
   eval val=\$$1
-  {
-    if [ "x$val" != x ]; then
-      echo "$1"'='"$val"
-    fi
-  }
+  echo "${1}=${val}"
 }
 
 compiler_specifics() {
@@ -1335,6 +1331,7 @@ else
   clear_var HAVE_PTHREAD_SUPPORT
 fi
 
+link_libdl=
 if [ "x${use_dlopen}" != x ]; then
   msg_printf 'Looking for dlopen()... '
   cat > config_test.c <<EOF

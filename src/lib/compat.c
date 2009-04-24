@@ -282,7 +282,8 @@ compat_mono_time_clock_gettime(struct timeval *tv)
   static bool initialized;
   static struct timespec now, prev;
   struct timespec cur;
-  long nd;
+
+#define TEN_E9 1000000000UL
 
   if (!initialized) {
     initialized = true;
@@ -295,13 +296,20 @@ compat_mono_time_clock_gettime(struct timeval *tv)
   }
 
   clock_gettime(CLOCK_MONOTONIC, &cur);
+  RUNTIME_ASSERT(cur.tv_sec >= prev.tv_sec);
+  RUNTIME_ASSERT(cur.tv_nsec < TEN_E9);
+
   now.tv_sec += cur.tv_sec - prev.tv_sec;
-  nd = cur.tv_nsec - prev.tv_nsec; 
-  if (nd > LONG_MAX - now.tv_nsec) {
-    nd -= LONG_MAX - now.tv_nsec;
-    now.tv_sec++;
+  if (cur.tv_nsec < prev.tv_nsec) {
+    now.tv_sec--;
+    now.tv_nsec += (TEN_E9 + cur.tv_nsec) - prev.tv_nsec;
+  } else {
+    now.tv_nsec += cur.tv_nsec - prev.tv_nsec;
   }
-  now.tv_nsec += nd;
+  if (now.tv_nsec >= TEN_E9) {
+    now.tv_sec++;
+    now.tv_nsec -= TEN_E9;
+  }
   prev = cur;
 
   if (tv) {
