@@ -297,7 +297,7 @@ compat_mono_time_clock_gettime(struct timeval *tv)
 
   clock_gettime(CLOCK_MONOTONIC, &cur);
   RUNTIME_ASSERT(cur.tv_sec >= prev.tv_sec);
-  RUNTIME_ASSERT(cur.tv_nsec < TEN_E9);
+  RUNTIME_ASSERT(cur.tv_nsec + 0UL < TEN_E9);
 
   now.tv_sec += cur.tv_sec - prev.tv_sec;
   if (cur.tv_nsec < prev.tv_nsec) {
@@ -306,7 +306,7 @@ compat_mono_time_clock_gettime(struct timeval *tv)
   } else {
     now.tv_nsec += cur.tv_nsec - prev.tv_nsec;
   }
-  if (now.tv_nsec >= TEN_E9) {
+  if (now.tv_nsec + 0UL >= TEN_E9) {
     now.tv_sec++;
     now.tv_nsec -= TEN_E9;
   }

@@ -133,14 +133,12 @@ get_sums(int fd, struct tth *tth, struct sha1 *sha1)
 {
   struct compat_sha1 sha1_ctx;
   TT_CONTEXT tt_ctx;
-  struct thex_context thex_ctx;
   struct stat sb;
 
   if (fstat(fd, &sb)) {
     fprintf(stderr, "fstat(): %s\n", compat_strerror(errno));
     return -1;
   }
-  thex_ctx.filesize = sb.st_size;
 
   if (sha1) {
     compat_sha1_init(&sha1_ctx);
@@ -234,12 +232,10 @@ main(int argc, char *argv[])
   static bool get_bitprint = true,
               get_sha1 = false,
               get_tth = false,
-              convert = false,
               quiet = false;
-  unsigned depth = 9;
   int i, c;
 
-  while (-1 != (c = getopt(argc, argv, "c:d:hvqST"))) {
+  while (-1 != (c = getopt(argc, argv, "c:hvqST"))) {
     switch (c) {
     case 'h':
       usage(EXIT_SUCCESS);
@@ -260,7 +256,6 @@ main(int argc, char *argv[])
       break;
 
     case 'c':
-      convert = true;
       {
         const char *s;
         size_t len;
@@ -291,22 +286,6 @@ main(int argc, char *argv[])
             fprintf(stderr, "Error: hexadecimal SHA-1 has wrong length.\n");
             usage(EXIT_FAILURE);
           }
-        }
-      }
-      break;
-
-    case 'd':
-      if (0 != depth) {
-        fprintf(stderr, "Error: -d must not be given more than once.\n");
-        usage(EXIT_FAILURE);
-      } else {
-        char *endptr;
-        int error;
-        
-        depth = parse_uint16(optarg, &endptr, 10, &error);
-        if (0 == depth || depth > 32 || error || '\0' != *endptr) {
-          fprintf(stderr, "Error: Requested depth is out of range (1..32).\n");
-          usage(EXIT_FAILURE);
         }
       }
       break;

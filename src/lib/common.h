@@ -521,11 +521,11 @@ typedef struct {
     
     STATIC_ASSERT_PLAIN(sizeof(intptr_t) == sizeof(void *)) ^
     STATIC_ASSERT_PLAIN(sizeof(uintptr_t) == sizeof(void *)) ^
+    STATIC_ASSERT_PLAIN((uintptr_t)(intptr_t) -1 == (uintptr_t) -1) ^
+    STATIC_ASSERT_PLAIN((uintptr_t) 0 == 0) ^
     
-    STATIC_ASSERT_PLAIN((uintptr_t)(void *)(intptr_t) -1 == (uintptr_t) -1) ^
-    STATIC_ASSERT_PLAIN((uintptr_t)(void *) 0 == 0) ^
-    STATIC_ASSERT_PLAIN((intptr_t)(void *) INT_MAX == INT_MAX) ^
-    STATIC_ASSERT_PLAIN((uintptr_t)(void *) INT_MAX == INT_MAX) ^
+    STATIC_ASSERT_PLAIN((intptr_t) INT_MAX == INT_MAX) ^
+    STATIC_ASSERT_PLAIN((uintptr_t) INT_MAX == INT_MAX) ^
     
     STATIC_ASSERT_PLAIN(sizeof(void *) >= sizeof(int)) ^
 
