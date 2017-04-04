@@ -16,7 +16,7 @@ verbosity=100
 while [ $# -gt 0 ]
 do
     key="$1"
-    case $key in
+    case "$key" in
 	-repo)
 	    repos+=("$2")
 	    shift
@@ -51,7 +51,8 @@ for defaultrepolistfile in "${defaultrepolistfiles[@]}"
 do
     if [ -e "$defaultrepolistfile" ]
     then
-	for defaultrepo in $(cat "$defaultrepolistfile")
+	if [ "$verbosity" -ge 200 ] ; then echo "$scriptname: Reading default repo list from $defaultrepolistfile" >&2 ; fi
+	for defaultrepo in $(grep -v '^#\|^$' "$defaultrepolistfile")
 	do
 	    repos+=("$defaultrepo")
 	done
