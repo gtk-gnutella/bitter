@@ -1,0 +1,92 @@
+#!/bin/bash
+
+repos=()
+
+scriptname="$0"
+urn=""
+outfile=""
+bitter="$(dirname "$0")/src/bitter -q"
+
+#   0 = silent
+# 100 = errors
+# 150 = warnings
+# 200 = very chatty
+verbosity=100
+
+while [ $# -gt 0 ]
+do
+    key="$1"
+    case $key in
+	-repo)
+	    repos+=("$2")
+	    shift
+	    ;;
+	-v)
+	    verbosity=200
+	    ;;
+	-o)
+	    outfile="$2"
+	    shift
+	    ;;
+	*)
+	    urn="$1"
+    esac
+    shift
+done
+
+for defaultrepo in fs.marvin.nuke24.net toggh1.nuke24.net piccouch.appspot.com
+do
+    repos+=("$defaultrepo")
+done
+
+if [ -z "$urn" ]
+then
+    echo "$scriptname: Error: No URN specified" >&2
+    exit 1
+fi
+
+if [ -z "$outfile" ]
+then
+    echo "$scriptname: Error: No outfile (-o) specified" >&2
+    exit 1
+fi
+
+tempfile="$(dirname "$outfile")/.$(basename "$outfile").temp"
+
+# If the file already exists and matches, skip downloading!!!
+if [ -e "$outfile" ]
+then
+    actualurn="$($bitter "$outfile")"
+    if [ "$actualurn" == "$urn" ]
+    then
+	if [ "$verbosity" -ge 200 ] ; then 
+	    echo "$scriptname: $outfile already up-to-date" >&1
+	fi
+	exit 0
+    fi
+fi
+
+
+for repo in "${repos[@]}"
+do
+    dlurl="http://${repo}/uri-res/N2R?${urn}"
+    if curl -s -f -o "$tempfile" "$dlurl"
+    then
+	actualurn="$($bitter "$tempfile")"
+	if [ "${actualurn}" == "$urn" ]
+	then
+	    if [ "$verbosity" -ge 200 ] ; then echo "$scriptname: Successfully downloaded from $dlurl" >&2 ; fi
+	    mv "$tempfile" "$outfile"
+	    exit $?
+	else
+	    if [ "$verbosity" -ge 150 ] ; then echo "$scriptname: Hash mismatch: $dlurl = $actualurn" >&2 ; fi
+	fi
+    else
+	if [ "$verbosity" -ge 200 ] ; then echo "$scriptname: Failed to download from $dlurl" >&2 ; fi
+    fi
+done
+
+if [ "$verbosity" -ge 100 ] ; then 
+    echo "$scriptname: Failed to download $urn from any source" >&2
+fi
+exit 1
