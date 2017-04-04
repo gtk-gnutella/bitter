@@ -34,11 +34,6 @@ do
     shift
 done
 
-for defaultrepo in fs.marvin.nuke24.net toggh1.nuke24.net piccouch.appspot.com
-do
-    repos+=("$defaultrepo")
-done
-
 if [ -z "$urn" ]
 then
     echo "$scriptname: Error: No URN specified" >&2
@@ -50,6 +45,18 @@ then
     echo "$scriptname: Error: No outfile (-o) specified" >&2
     exit 1
 fi
+
+defaultrepolistfiles=("$(dirname "$0")/repos.lst")
+for defaultrepolistfile in "${defaultrepolistfiles[@]}"
+do
+    if [ -e "$defaultrepolistfile" ]
+    then
+	for defaultrepo in $(cat "$defaultrepolistfile")
+	do
+	    repos+=("$defaultrepo")
+	done
+    fi
+done
 
 tempfile="$(dirname "$outfile")/.$(basename "$outfile").temp"
 
